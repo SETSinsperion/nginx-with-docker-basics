@@ -1,0 +1,27 @@
+services:
+    web-server:
+        container_name: web-server
+        image: nginx:1.27.5-alpine
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./web_server/conf:/etc/nginx/conf.d
+            - ./web_server/certs:/etc/nginx/certs
+            - ./frontend:/usr/share/nginx/html
+        networks:
+            - reverse_proxy_network
+        depends_on:
+            - backend
+    backend:
+        container_name: test-api
+        build: 
+            context: ./backend
+        ports:
+            - "8001:8000"
+        networks:
+            - reverse_proxy_network
+networks:
+  reverse_proxy_network:
+    name: reverse_proxy_network    
+    driver: bridge
